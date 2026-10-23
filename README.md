@@ -13,6 +13,8 @@ If the deployment screen does not offer these values, open your Worker → Setti
 
 4. Return to Forge and wait for Connected. A new Cloudflare schedule can take up to 15 minutes to activate. Then launch a short task from your world. Your laptop can close after Forge confirms the task was queued.
 
+If GitHub authorization returns to a generic repository picker, reopen the Deploy link from Forge to restore this template form. Choose a private repository and leave Preview builds off. If the setup value expires during signup, generate a fresh value and replace the secret in the same Worker.
+
 Cloudflare may ask to copy this template into your GitHub account and authorize its build app. Review those permissions yourself. No terminal is required for the deploy-button path.
 
 ## What stops usage
