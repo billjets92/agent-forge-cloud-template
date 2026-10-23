@@ -2,11 +2,15 @@
 
 A small Cloudflare Worker runs short summaries, drafts and plans in **your own Cloudflare account**, even while your browser is closed and laptop is asleep. It is a starter assistant, not a host for uploaded Python teams or an always-on uptime guarantee.
 
+[Deploy to your Cloudflare account](https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fbilljets92%2Fagent-forge-cloud-template)
+
 ## Browser setup
 
 1. In Agent Forge, choose **Cloud account**, create a cloud world and copy its private setup value. It expires in 30 minutes; generate a new value if it expires.
 2. Use the Deploy to Cloudflare link supplied by Forge. Sign in to **your own** Cloudflare and GitHub accounts. Choose **Workers Free**. Do not add payment, upgrade or use someone else's account. If deployment asks for a paid plan, stop.
 3. In deployment settings, paste the setup value into the **FORGE_SETUP secret**. Set **FREE_PLAN_ONLY** to `confirmed` only after checking your Workers plan is Free. Keep the AI and DB bindings. Deploy.
+If the deployment screen does not offer these values, open your Worker → Settings → Variables and Secrets after deployment, add them there and deploy the changes. No agent work runs before confirmation and pairing.
+
 4. Return to Forge and wait for Connected. A new Cloudflare schedule can take up to 15 minutes to activate. Then launch a short task from your world. Your laptop can close after Forge confirms the task was queued.
 
 Cloudflare may ask to copy this template into your GitHub account and authorize its build app. Review those permissions yourself. No terminal is required for the deploy-button path.
