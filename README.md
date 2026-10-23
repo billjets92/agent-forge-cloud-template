@@ -40,6 +40,6 @@ To repair an expired or revoked connection, generate a new cloud setup value in 
 
 ## Validation status
 
-Local automated checks cover durable SQL limits, concurrent/duplicate reservations, single model invocation, failure redaction, cancellation, pairing and Forge access boundaries. The AI binding is mocked during tests, so no owner credits are used. A customer Free-account deployment and real model result still require verification. This preview is not represented as a verified production Cloudflare integration yet.
+Local automated checks cover durable SQL limits, concurrent/duplicate reservations, single model invocation, failure redaction, cancellation, pairing and Forge access boundaries. The AI binding is mocked during tests, so no owner credits are used. One controlled Workers Free deployment completed a real Llama 3.2 3B task on 2026-10-23 UTC: queued, claimed, agent.started, agent.completed and retained report. The isolated connection was then revoked. This verifies one account and one run, not production reliability. The model invented UI details and timings in its draft; review all output and use supplied source material for summaries. No browsing or external actions are available.
 
 Official references: [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [Deploy buttons](https://developers.cloudflare.com/workers/platform/deploy-buttons/), [Cron triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/).

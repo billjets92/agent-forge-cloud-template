@@ -28,9 +28,12 @@ export async function tick(env,{fetcher=(...a)=>fetch(...a),now=()=>Date.now(),a
  try{
   let token='';
   const api=async(path,body={},lease='',pair='')=>{
-   const response=await fetcher(FORGE+'/v1/workspaces/'+config.world+path,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',...(token?{'X-Runtime-Token':token,'X-Workspace-Token':token}:{}),...(lease?{'X-Run-Lease':lease}:{}),...(pair?{'X-Pairing-Code':pair}:{})},body:JSON.stringify(body),signal:AbortSignal.timeout(10000)});
+   const operation=path.split('/').at(-1);
+   let response;
+   try{response=await fetcher(FORGE+'/v1/workspaces/'+config.world+path,{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json',...(token?{'X-Runtime-Token':token,'X-Workspace-Token':token}:{}),...(lease?{'X-Run-Lease':lease}:{}),...(pair?{'X-Pairing-Code':pair}:{})},body:JSON.stringify(body),signal:AbortSignal.timeout(pair?60000:20000)});}
+   catch(error){throw Error('forge_'+operation+'_'+(['TimeoutError','AbortError'].includes(error?.name)?'timeout':'network'));}
    if(!response.ok)throw Error('Forge connection refused ('+response.status+'). No work was retried.');
-   return response.json();
+   try{return await response.json();}catch{throw Error('forge_'+operation+'_invalid_response');}
   };
   const stored=await db.prepare('SELECT value FROM settings WHERE id=?').bind('runtime').first();
   let saved=stored?JSON.parse(stored.value):null;
@@ -69,7 +72,17 @@ export async function tick(env,{fetcher=(...a)=>fetch(...a),now=()=>Date.now(),a
   await db.prepare('DELETE FROM attempts WHERE day < ?').bind(new Date(time-7*86400000).toISOString().slice(0,10)).run();
  }finally{await db.prepare("DELETE FROM locks WHERE id='tick' AND until_ms=?").bind(time+240000).run();}
 }
+export function diagnostic(error){
+ const message=String(error?.message||'');
+ if(/^forge_(connect|claim|pulse|events|finish)_(timeout|network|invalid_response)$/.test(message))return message;
+ if(message.startsWith('Confirm Workers Free'))return 'free_plan_not_confirmed';
+ if(message.startsWith('Add the private setup')||message.startsWith('Invalid setup'))return 'setup_value_invalid';
+ const http=message.match(/^Forge connection refused \((\d{3})\)/);if(http)return 'forge_http_'+http[1];
+ if(message.startsWith('D1_'))return 'database_error';
+ if(message.startsWith('Lease lost'))return 'lease_lost';
+ return 'unexpected_error';
+}
 export default {
  fetch(){return new Response('Agent Forge cloud connector. Tasks are accepted only through your paired Forge world.',{headers:{'Content-Type':'text/plain','Cache-Control':'no-store'}});},
- async scheduled(controller,env,ctx){ctx.waitUntil(tick(env).catch(()=>{console.error('Cloud connector paused or could not complete this tick. Check pairing, Free plan, bindings and retained task status. No task replay.');}));}
+ async scheduled(controller,env,ctx){ctx.waitUntil(tick(env).catch(error=>{console.error('Cloud connector stopped: '+diagnostic(error)+'. No task replay. Check setup and retained task status.');}));}
 };
