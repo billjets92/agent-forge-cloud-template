@@ -11,7 +11,7 @@ A small Cloudflare Worker runs short summaries, drafts and plans in **your own C
 3. In deployment settings, paste the setup value into the **FORGE_SETUP secret**. Set **FREE_PLAN_ONLY** to `confirmed` only after checking your Workers plan is Free. Keep the AI and DB bindings. Deploy.
 If the deployment screen does not offer these values, open your Worker → Settings → Variables and Secrets after deployment, add them there and deploy the changes. No agent work runs before confirmation and pairing.
 
-4. Return to Forge and wait for Connected. A new Cloudflare schedule can take up to 15 minutes to activate. Then launch a short task from your world. Your laptop can close after Forge confirms the task was queued.
+4. Return to Forge and wait for Connected. A new Cloudflare schedule can take up to 15 minutes to activate. Then choose Summarize notes, Improve a draft, or Make a plan from your world. Paste source notes or a draft; plans require a goal. Extra direction is optional. Your laptop can close after Forge confirms the task was queued.
 
 If GitHub authorization returns to a generic repository picker, reopen the Deploy link from Forge to restore this template form. Choose a private repository and leave Preview builds off. If the setup value expires during signup, generate a fresh value and replace the secret in the same Worker.
 
@@ -38,8 +38,16 @@ Use **Disconnect runtime** in Forge to revoke access. Delete the Worker or remov
 
 To repair an expired or revoked connection, generate a new cloud setup value in Forge, replace FORGE_SETUP in the same Worker and redeploy. Keep the same D1 binding so daily limits survive redeployment. Do not deploy multiple copies to evade allowances.
 
+## Better briefs and useful drafts
+
+Supply the facts you want the assistant to use. Summaries and reviews require source material in the site; plans require a goal and label assumptions. The worker instructs the model to preserve names, dates and numbers, distinguish facts from suggestions, and identify missing information. It includes a small set of established Forge interface facts and uses a low sampling temperature. These instructions reduce opportunities for invention; they do not guarantee factual accuracy.
+
+The world labels completion **Draft ready**. **Review draft** opens the result with the original task and notes available for comparison. Nothing is published or acted upon automatically. The worker still uses one call, 512 output tokens and the same free limits. Already-deployed copies need their owner to update their Worker to receive these prompt changes; updating the template does not silently update customer accounts.
+
 ## Validation status
 
 Local automated checks cover durable SQL limits, concurrent/duplicate reservations, single model invocation, failure redaction, cancellation, pairing and Forge access boundaries. The AI binding is mocked during tests, so no owner credits are used. One controlled Workers Free deployment completed a real Llama 3.2 3B task on 2026-10-23 UTC: queued, claimed, agent.started, agent.completed and retained report. The isolated connection was then revoked. This verifies one account and one run, not production reliability. The model invented UI details and timings in its draft; review all output and use supplied source material for summaries. No browsing or external actions are available.
 
 Official references: [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [Deploy buttons](https://developers.cloudflare.com/workers/platform/deploy-buttons/), [Cron triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/).
+
+The source-first prompt revision is covered by local mocked-binding tests and browser checks. It has not had an additional real-model evaluation; the previous single real run is the only approved inference so far.
