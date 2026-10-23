@@ -1,0 +1,14 @@
+{
+  "name":"forge-customer-cloud-agent",
+  "version":"0.1.0",
+  "private":true,
+  "type":"module",
+  "scripts":{"deploy":"wrangler deploy","check":"wrangler deploy --dry-run --outdir .check"},
+  "devDependencies":{"wrangler":"4.45.0"},
+  "cloudflare":{"bindings":{
+    "FREE_PLAN_ONLY":{"description":"Use your OWN account with Workers Free. Leave not-confirmed until you have checked your plan; then set confirmed. Never upgrade for this beta."},
+    "FORGE_SETUP":{"description":"Paste the private cloud setup value generated inside your Forge world. This is a one-use scoped pairing code, not a model API key."},
+    "AI":{"description":"Uses only your own account's Workers AI free allowance. No host provider credentials."},
+    "DB":{"description":"Private state: pairing credential, five-attempt daily counter and concurrency lock."}
+  }}
+}
